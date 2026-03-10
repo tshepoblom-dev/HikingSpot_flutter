@@ -212,7 +212,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
 
           // ── Stats Strip ────────────────────────────────────────────────
-          SliverToBoxAdapter(
+/*          SliverToBoxAdapter(
             child: Container(
               color: AppColors.primaryDark,
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -227,7 +227,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ],
               ),
             ),
-          ),
+          ),*/
 
           // ── Available Trips ────────────────────────────────────────────
           SliverPadding(

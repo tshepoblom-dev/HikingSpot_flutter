@@ -80,11 +80,11 @@ class RequestBookingVM extends _$RequestBookingVM {
   @override
   AsyncValue<BookingResponse?> build() => const AsyncData(null);
 
-  Future<BookingResponse?> request(int tripId, {int seats = 1}) async {
+  Future<BookingResponse?> request(int tripId, {int seats = 1, int paymentMethod = 1}) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() =>
       ref.read(bookingsApiServiceProvider).requestBooking(
-        BookingRequest(tripId: tripId, seatsRequested: seats),
+        BookingRequest(tripId: tripId, seatsRequested: seats, paymentMethod: paymentMethod),
       ));
     return state.valueOrNull;
   }

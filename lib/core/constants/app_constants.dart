@@ -5,7 +5,7 @@ class AppConstants {
 
   // ── API ───────────────────────────────────────────────────────────────────
   static const String baseUrl = 'https://api.hikingspot.com';
-  static const String devUrl  = 'https://21de-105-0-1-3.ngrok-free.app';
+  static const String devUrl  = 'https://837e-105-0-7-164.ngrok-free.app';
   static const String hubUrl  = '$devUrl/chatHub';
 
   static const Duration connectTimeout = Duration(seconds: 30);

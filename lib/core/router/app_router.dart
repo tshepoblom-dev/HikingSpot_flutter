@@ -117,14 +117,8 @@ GoRouter appRouter(AppRouterRef ref) {
               return TripResultsScreen(searchParams: extra);
             },
           ),
-          GoRoute(
-            path: RouteConstants.tripDetails,
-            builder: (_, state) {
-              final tripId =
-                  int.tryParse(state.pathParameters['tripId'] ?? '0') ?? 0;
-              return TripDetailsScreen(tripId: tripId);
-            },
-          ),
+          // ⚠️ Specific /trips/* paths MUST come before /trips/:tripId
+          // otherwise GoRouter matches "create" / "my" as the tripId parameter.
           GoRoute(
             path: RouteConstants.createTrip,
             builder: (_, __) => const CreateTripScreen(),
@@ -132,6 +126,14 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(
             path: RouteConstants.myTrips,
             builder: (_, __) => const MyTripsScreen(),
+          ),
+          GoRoute(
+            path: RouteConstants.tripDetails,
+            builder: (_, state) {
+              final tripId =
+                  int.tryParse(state.pathParameters['tripId'] ?? '0') ?? 0;
+              return TripDetailsScreen(tripId: tripId);
+            },
           ),
           GoRoute(
             path: RouteConstants.bookingList,

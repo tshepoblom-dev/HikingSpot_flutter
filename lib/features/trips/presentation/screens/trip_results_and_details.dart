@@ -359,6 +359,7 @@ class _TripDetailsScreenState extends ConsumerState<TripDetailsScreen> {
             ],
           ),
         ),
+        Positioned(
           bottom: 0, left: 0, right: 0,
           child: Container(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),

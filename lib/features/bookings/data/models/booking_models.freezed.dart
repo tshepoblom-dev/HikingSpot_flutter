@@ -22,6 +22,7 @@ BookingRequest _$BookingRequestFromJson(Map<String, dynamic> json) {
 mixin _$BookingRequest {
   int get tripId => throw _privateConstructorUsedError;
   int get seatsRequested => throw _privateConstructorUsedError;
+  int get paymentMethod => throw _privateConstructorUsedError;
 
   /// Serializes this BookingRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +40,7 @@ abstract class $BookingRequestCopyWith<$Res> {
           BookingRequest value, $Res Function(BookingRequest) then) =
       _$BookingRequestCopyWithImpl<$Res, BookingRequest>;
   @useResult
-  $Res call({int tripId, int seatsRequested});
+  $Res call({int tripId, int seatsRequested, int paymentMethod});
 }
 
 /// @nodoc
@@ -59,6 +60,7 @@ class _$BookingRequestCopyWithImpl<$Res, $Val extends BookingRequest>
   $Res call({
     Object? tripId = null,
     Object? seatsRequested = null,
+    Object? paymentMethod = null,
   }) {
     return _then(_value.copyWith(
       tripId: null == tripId
@@ -68,6 +70,10 @@ class _$BookingRequestCopyWithImpl<$Res, $Val extends BookingRequest>
       seatsRequested: null == seatsRequested
           ? _value.seatsRequested
           : seatsRequested // ignore: cast_nullable_to_non_nullable
+              as int,
+      paymentMethod: null == paymentMethod
+          ? _value.paymentMethod
+          : paymentMethod // ignore: cast_nullable_to_non_nullable
               as int,
     ) as $Val);
   }
@@ -81,7 +87,7 @@ abstract class _$$BookingRequestImplCopyWith<$Res>
       __$$BookingRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int tripId, int seatsRequested});
+  $Res call({int tripId, int seatsRequested, int paymentMethod});
 }
 
 /// @nodoc
@@ -99,6 +105,7 @@ class __$$BookingRequestImplCopyWithImpl<$Res>
   $Res call({
     Object? tripId = null,
     Object? seatsRequested = null,
+    Object? paymentMethod = null,
   }) {
     return _then(_$BookingRequestImpl(
       tripId: null == tripId
@@ -109,6 +116,10 @@ class __$$BookingRequestImplCopyWithImpl<$Res>
           ? _value.seatsRequested
           : seatsRequested // ignore: cast_nullable_to_non_nullable
               as int,
+      paymentMethod: null == paymentMethod
+          ? _value.paymentMethod
+          : paymentMethod // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -116,7 +127,8 @@ class __$$BookingRequestImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$BookingRequestImpl implements _BookingRequest {
-  const _$BookingRequestImpl({required this.tripId, this.seatsRequested = 1});
+  const _$BookingRequestImpl(
+      {required this.tripId, this.seatsRequested = 1, this.paymentMethod = 0});
 
   factory _$BookingRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$BookingRequestImplFromJson(json);
@@ -126,10 +138,13 @@ class _$BookingRequestImpl implements _BookingRequest {
   @override
   @JsonKey()
   final int seatsRequested;
+  @override
+  @JsonKey()
+  final int paymentMethod;
 
   @override
   String toString() {
-    return 'BookingRequest(tripId: $tripId, seatsRequested: $seatsRequested)';
+    return 'BookingRequest(tripId: $tripId, seatsRequested: $seatsRequested, paymentMethod: $paymentMethod)';
   }
 
   @override
@@ -139,12 +154,15 @@ class _$BookingRequestImpl implements _BookingRequest {
             other is _$BookingRequestImpl &&
             (identical(other.tripId, tripId) || other.tripId == tripId) &&
             (identical(other.seatsRequested, seatsRequested) ||
-                other.seatsRequested == seatsRequested));
+                other.seatsRequested == seatsRequested) &&
+            (identical(other.paymentMethod, paymentMethod) ||
+                other.paymentMethod == paymentMethod));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, tripId, seatsRequested);
+  int get hashCode =>
+      Object.hash(runtimeType, tripId, seatsRequested, paymentMethod);
 
   /// Create a copy of BookingRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -166,7 +184,8 @@ class _$BookingRequestImpl implements _BookingRequest {
 abstract class _BookingRequest implements BookingRequest {
   const factory _BookingRequest(
       {required final int tripId,
-      final int seatsRequested}) = _$BookingRequestImpl;
+      final int seatsRequested,
+      final int paymentMethod}) = _$BookingRequestImpl;
 
   factory _BookingRequest.fromJson(Map<String, dynamic> json) =
       _$BookingRequestImpl.fromJson;
@@ -175,6 +194,8 @@ abstract class _BookingRequest implements BookingRequest {
   int get tripId;
   @override
   int get seatsRequested;
+  @override
+  int get paymentMethod;
 
   /// Create a copy of BookingRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -192,6 +213,7 @@ BookingResponse _$BookingResponseFromJson(Map<String, dynamic> json) {
 mixin _$BookingResponse {
   int get bookingId => throw _privateConstructorUsedError;
   int get tripId => throw _privateConstructorUsedError;
+  String get passengerId => throw _privateConstructorUsedError;
   String get passengerName => throw _privateConstructorUsedError;
   String get departureCity => throw _privateConstructorUsedError;
   String get destinationCity => throw _privateConstructorUsedError;
@@ -199,6 +221,9 @@ mixin _$BookingResponse {
   int get seatsRequested => throw _privateConstructorUsedError;
   @BookingStatusConverter()
   BookingStatus get status => throw _privateConstructorUsedError;
+  int get paymentMethod =>
+      throw _privateConstructorUsedError; // raw int from server
+  bool get commissionCharged => throw _privateConstructorUsedError;
   DateTime get requestedAt => throw _privateConstructorUsedError;
 
   /// Serializes this BookingResponse to a JSON map.
@@ -220,12 +245,15 @@ abstract class $BookingResponseCopyWith<$Res> {
   $Res call(
       {int bookingId,
       int tripId,
+      String passengerId,
       String passengerName,
       String departureCity,
       String destinationCity,
       DateTime departureTime,
       int seatsRequested,
       @BookingStatusConverter() BookingStatus status,
+      int paymentMethod,
+      bool commissionCharged,
       DateTime requestedAt});
 }
 
@@ -246,12 +274,15 @@ class _$BookingResponseCopyWithImpl<$Res, $Val extends BookingResponse>
   $Res call({
     Object? bookingId = null,
     Object? tripId = null,
+    Object? passengerId = null,
     Object? passengerName = null,
     Object? departureCity = null,
     Object? destinationCity = null,
     Object? departureTime = null,
     Object? seatsRequested = null,
     Object? status = null,
+    Object? paymentMethod = null,
+    Object? commissionCharged = null,
     Object? requestedAt = null,
   }) {
     return _then(_value.copyWith(
@@ -263,6 +294,10 @@ class _$BookingResponseCopyWithImpl<$Res, $Val extends BookingResponse>
           ? _value.tripId
           : tripId // ignore: cast_nullable_to_non_nullable
               as int,
+      passengerId: null == passengerId
+          ? _value.passengerId
+          : passengerId // ignore: cast_nullable_to_non_nullable
+              as String,
       passengerName: null == passengerName
           ? _value.passengerName
           : passengerName // ignore: cast_nullable_to_non_nullable
@@ -287,6 +322,14 @@ class _$BookingResponseCopyWithImpl<$Res, $Val extends BookingResponse>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as BookingStatus,
+      paymentMethod: null == paymentMethod
+          ? _value.paymentMethod
+          : paymentMethod // ignore: cast_nullable_to_non_nullable
+              as int,
+      commissionCharged: null == commissionCharged
+          ? _value.commissionCharged
+          : commissionCharged // ignore: cast_nullable_to_non_nullable
+              as bool,
       requestedAt: null == requestedAt
           ? _value.requestedAt
           : requestedAt // ignore: cast_nullable_to_non_nullable
@@ -306,12 +349,15 @@ abstract class _$$BookingResponseImplCopyWith<$Res>
   $Res call(
       {int bookingId,
       int tripId,
+      String passengerId,
       String passengerName,
       String departureCity,
       String destinationCity,
       DateTime departureTime,
       int seatsRequested,
       @BookingStatusConverter() BookingStatus status,
+      int paymentMethod,
+      bool commissionCharged,
       DateTime requestedAt});
 }
 
@@ -330,12 +376,15 @@ class __$$BookingResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? bookingId = null,
     Object? tripId = null,
+    Object? passengerId = null,
     Object? passengerName = null,
     Object? departureCity = null,
     Object? destinationCity = null,
     Object? departureTime = null,
     Object? seatsRequested = null,
     Object? status = null,
+    Object? paymentMethod = null,
+    Object? commissionCharged = null,
     Object? requestedAt = null,
   }) {
     return _then(_$BookingResponseImpl(
@@ -347,6 +396,10 @@ class __$$BookingResponseImplCopyWithImpl<$Res>
           ? _value.tripId
           : tripId // ignore: cast_nullable_to_non_nullable
               as int,
+      passengerId: null == passengerId
+          ? _value.passengerId
+          : passengerId // ignore: cast_nullable_to_non_nullable
+              as String,
       passengerName: null == passengerName
           ? _value.passengerName
           : passengerName // ignore: cast_nullable_to_non_nullable
@@ -371,6 +424,14 @@ class __$$BookingResponseImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as BookingStatus,
+      paymentMethod: null == paymentMethod
+          ? _value.paymentMethod
+          : paymentMethod // ignore: cast_nullable_to_non_nullable
+              as int,
+      commissionCharged: null == commissionCharged
+          ? _value.commissionCharged
+          : commissionCharged // ignore: cast_nullable_to_non_nullable
+              as bool,
       requestedAt: null == requestedAt
           ? _value.requestedAt
           : requestedAt // ignore: cast_nullable_to_non_nullable
@@ -385,12 +446,15 @@ class _$BookingResponseImpl implements _BookingResponse {
   const _$BookingResponseImpl(
       {required this.bookingId,
       required this.tripId,
+      this.passengerId = '',
       required this.passengerName,
       required this.departureCity,
       required this.destinationCity,
       required this.departureTime,
       required this.seatsRequested,
       @BookingStatusConverter() required this.status,
+      this.paymentMethod = 0,
+      this.commissionCharged = false,
       required this.requestedAt});
 
   factory _$BookingResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -400,6 +464,9 @@ class _$BookingResponseImpl implements _BookingResponse {
   final int bookingId;
   @override
   final int tripId;
+  @override
+  @JsonKey()
+  final String passengerId;
   @override
   final String passengerName;
   @override
@@ -414,11 +481,18 @@ class _$BookingResponseImpl implements _BookingResponse {
   @BookingStatusConverter()
   final BookingStatus status;
   @override
+  @JsonKey()
+  final int paymentMethod;
+// raw int from server
+  @override
+  @JsonKey()
+  final bool commissionCharged;
+  @override
   final DateTime requestedAt;
 
   @override
   String toString() {
-    return 'BookingResponse(bookingId: $bookingId, tripId: $tripId, passengerName: $passengerName, departureCity: $departureCity, destinationCity: $destinationCity, departureTime: $departureTime, seatsRequested: $seatsRequested, status: $status, requestedAt: $requestedAt)';
+    return 'BookingResponse(bookingId: $bookingId, tripId: $tripId, passengerId: $passengerId, passengerName: $passengerName, departureCity: $departureCity, destinationCity: $destinationCity, departureTime: $departureTime, seatsRequested: $seatsRequested, status: $status, paymentMethod: $paymentMethod, commissionCharged: $commissionCharged, requestedAt: $requestedAt)';
   }
 
   @override
@@ -429,6 +503,8 @@ class _$BookingResponseImpl implements _BookingResponse {
             (identical(other.bookingId, bookingId) ||
                 other.bookingId == bookingId) &&
             (identical(other.tripId, tripId) || other.tripId == tripId) &&
+            (identical(other.passengerId, passengerId) ||
+                other.passengerId == passengerId) &&
             (identical(other.passengerName, passengerName) ||
                 other.passengerName == passengerName) &&
             (identical(other.departureCity, departureCity) ||
@@ -440,6 +516,10 @@ class _$BookingResponseImpl implements _BookingResponse {
             (identical(other.seatsRequested, seatsRequested) ||
                 other.seatsRequested == seatsRequested) &&
             (identical(other.status, status) || other.status == status) &&
+            (identical(other.paymentMethod, paymentMethod) ||
+                other.paymentMethod == paymentMethod) &&
+            (identical(other.commissionCharged, commissionCharged) ||
+                other.commissionCharged == commissionCharged) &&
             (identical(other.requestedAt, requestedAt) ||
                 other.requestedAt == requestedAt));
   }
@@ -450,12 +530,15 @@ class _$BookingResponseImpl implements _BookingResponse {
       runtimeType,
       bookingId,
       tripId,
+      passengerId,
       passengerName,
       departureCity,
       destinationCity,
       departureTime,
       seatsRequested,
       status,
+      paymentMethod,
+      commissionCharged,
       requestedAt);
 
   /// Create a copy of BookingResponse
@@ -479,12 +562,15 @@ abstract class _BookingResponse implements BookingResponse {
   const factory _BookingResponse(
       {required final int bookingId,
       required final int tripId,
+      final String passengerId,
       required final String passengerName,
       required final String departureCity,
       required final String destinationCity,
       required final DateTime departureTime,
       required final int seatsRequested,
       @BookingStatusConverter() required final BookingStatus status,
+      final int paymentMethod,
+      final bool commissionCharged,
       required final DateTime requestedAt}) = _$BookingResponseImpl;
 
   factory _BookingResponse.fromJson(Map<String, dynamic> json) =
@@ -494,6 +580,8 @@ abstract class _BookingResponse implements BookingResponse {
   int get bookingId;
   @override
   int get tripId;
+  @override
+  String get passengerId;
   @override
   String get passengerName;
   @override
@@ -507,6 +595,10 @@ abstract class _BookingResponse implements BookingResponse {
   @override
   @BookingStatusConverter()
   BookingStatus get status;
+  @override
+  int get paymentMethod; // raw int from server
+  @override
+  bool get commissionCharged;
   @override
   DateTime get requestedAt;
 
