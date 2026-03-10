@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "769011233101",
+    "project_id": "hikingspot-e41d7",
+    "storage_bucket": "hikingspot-e41d7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769011233101:android:407c2640fb6b4e3449c704",
+        "android_client_info": {
+          "package_name": "com.lumko.hikingspot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpORjlXWpUN3r_x3xUgmfP4Qc4uYBQKuI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
