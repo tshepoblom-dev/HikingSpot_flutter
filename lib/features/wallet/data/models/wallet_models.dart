@@ -40,12 +40,14 @@ TransactionType transactionTypeFromInt(int v) =>
 class WalletResponse {
   final int     walletId;
   final String  userId;
+  final String walletTag;
   final double  balance;
   final DateTime updatedAt;
 
   const WalletResponse({
     required this.walletId,
     required this.userId,
+    required this.walletTag,
     required this.balance,
     required this.updatedAt,
   });
@@ -53,6 +55,7 @@ class WalletResponse {
   factory WalletResponse.fromJson(Map<String, dynamic> json) => WalletResponse(
     walletId:  json['walletId']  as int,
     userId:    json['userId']    as String,
+    walletTag:    json['walletTag']    as String,
     balance:   (json['balance']  as num).toDouble(),
     updatedAt: DateTime.parse(json['updatedAt'] as String),
   );
@@ -141,18 +144,21 @@ class TopUpInitiateResponse {
 // ── P2P Transfer ──────────────────────────────────────────────────────────────
 
 class P2PTransferRequest {
-  final String  recipientUserId;
+  //final String  recipientUserId;
+  final String  recipientTag; 
   final double  amount;
   final String? note;
 
   const P2PTransferRequest({
-    required this.recipientUserId,
+   // required this.recipientUserId,
+    required this.recipientTag,
     required this.amount,
     this.note,
   });
 
   Map<String, dynamic> toJson() => {
-    'recipientUserId': recipientUserId,
+    'recipientTag': recipientTag,  
+  //recipientUserId: recipientUserId,
     'amount':          amount,
     if (note != null) 'note': note,
   };

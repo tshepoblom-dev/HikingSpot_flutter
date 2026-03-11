@@ -25,6 +25,7 @@ class WalletNotifier extends AsyncNotifier<WalletResponse> {
     state = state.whenData((w) => WalletResponse(
       walletId:  w.walletId,
       userId:    w.userId,
+      walletTag: w.walletTag,
       balance:   newBalance,
       updatedAt: DateTime.now(),
     ));
@@ -84,14 +85,14 @@ class TransferVMNotifier
   Future<P2PTransferResponse?> build() async => null;
 
   Future<P2PTransferResponse?> transfer({
-    required String recipientUserId,
+    required String recipientTag,
     required double amount,
     String? note,
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() =>
         ref.read(walletApiServiceProvider).transfer(P2PTransferRequest(
-          recipientUserId: recipientUserId,
+          recipientTag: recipientTag,
           amount:          amount,
           note:            note,
         )));

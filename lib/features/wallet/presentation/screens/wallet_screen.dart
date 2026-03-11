@@ -10,7 +10,7 @@ import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/hs_widgets.dart';
 import '../../data/models/wallet_models.dart';
 import '../providers/wallet_provider.dart';
-
+import 'package:webview_flutter/webview_flutter.dart';
 class WalletScreen extends ConsumerStatefulWidget {
   const WalletScreen({super.key});
 
@@ -322,7 +322,7 @@ class _TransferTabState extends ConsumerState<_TransferTab> {
     final result = await ref
         .read(transferVMProvider.notifier)
         .transfer(
-          recipientUserId: _recipCtrl.text.trim(),
+          recipientTag: _recipCtrl.text.trim(),
           amount:          amount,
           note:            _noteCtrl.text.trim().isEmpty ? null : _noteCtrl.text.trim(),
         );
@@ -361,6 +361,51 @@ class _TransferTabState extends ConsumerState<_TransferTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // At the top of _TransferTab build(), before the info card
+            Consumer(builder: (_, ref, __) {
+              final wallet = ref.watch(walletProvider).valueOrNull;
+              if (wallet?.walletTag == null) return const SizedBox();
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.account_balance_wallet_outlined,
+                        color: AppColors.primary, size: 18),
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Your Wallet Tag',
+                            style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                        Text(wallet!.walletTag!,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: AppColors.primary,
+                                letterSpacing: 1)),
+                      ],
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.copy_outlined,
+                          color: AppColors.primary, size: 18),
+                      onPressed: () {
+                        Clipboard.setData(ClipboardData(text: wallet.walletTag!));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Wallet tag copied!')),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            }),
             // ── Info card ─────────────────────────────────────────────────
             Container(
               padding: const EdgeInsets.all(14),
@@ -387,18 +432,24 @@ class _TransferTabState extends ConsumerState<_TransferTab> {
             ),
             const SizedBox(height: 20),
 
-            const Text('Recipient User ID',
+            const Text('Recipient Wallet Tag',
                 style: TextStyle(
                     fontWeight: FontWeight.w600, fontSize: 14)),
             const SizedBox(height: 6),
             TextFormField(
               controller: _recipCtrl,
               decoration: const InputDecoration(
-                hintText: 'Paste the recipient\'s User ID',
-                prefixIcon: Icon(Icons.person_outline),
+                hintText: 'e.g. HS-K7X2M9',
+                prefixIcon: Icon(Icons.tag_outlined),
               ),
-              validator: (v) =>
-                  (v?.trim().isEmpty ?? true) ? 'Required' : null,
+              validator: (v) {
+                final val = v?.trim() ?? '';
+                if (val.isEmpty) return 'Required';
+                if (!RegExp(r'^HS-[A-Z0-9]{6}$').hasMatch(val.toUpperCase())) {
+                  return 'Enter a valid wallet tag (e.g. HS-K7X2M9)';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16),
 
@@ -494,12 +545,27 @@ class _TopUpSheetState extends ConsumerState<_TopUpSheet> {
       );
     }
   }
+  // In _TopUpSheet — replace launchUrl with a WebView push
+  Future<void> _openPayFast(String url) async {
+    final result = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (_) => _PayFastWebView(paymentUrl: url),
+      ),
+    );
 
+    // result is 'success' | 'cancel' | null (dismissed)
+    if (result == 'success') {
+      widget.onSuccess();
+    }
+  }
+/*
   Future<void> _openPayFast(String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
+  //  if (await canLaunchUrl(uri)) {
+  try{
+      await launchUrl(uri, mode: LaunchMode.inAppWebView);
+  }
+  catch(e){
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Could not open payment page')),
@@ -507,7 +573,7 @@ class _TopUpSheetState extends ConsumerState<_TopUpSheet> {
       }
     }
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     final vm        = ref.watch(topUpVMProvider);
@@ -653,6 +719,67 @@ class _TopUpSheetState extends ConsumerState<_TopUpSheet> {
           ],
         ),
       ),
+    );
+  }
+}
+
+// New widget — add to wallet_screen.dart
+class _PayFastWebView extends StatefulWidget {
+  final String paymentUrl;
+  const _PayFastWebView({required this.paymentUrl});
+
+  @override
+  State<_PayFastWebView> createState() => _PayFastWebViewState();
+}
+
+class _PayFastWebViewState extends State<_PayFastWebView> {
+  late final WebViewController _controller;
+
+  // These must match exactly what the server returns as return/cancel URLs
+  static const _successPath = '/api/wallet/payfast/return';
+  static const _cancelPath  = '/api/wallet/payfast/cancel';
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(NavigationDelegate(
+        onNavigationRequest: (req) {
+          final uri = Uri.tryParse(req.url);
+          if (uri == null) return NavigationDecision.navigate;
+
+          if (uri.path == _successPath) {
+            // ITN will have already credited the wallet by the time
+            // PayFast redirects here — safe to refresh and close.
+            Navigator.of(context).pop('success');
+            return NavigationDecision.prevent;
+          }
+
+          if (uri.path == _cancelPath) {
+            Navigator.of(context).pop('cancel');
+            return NavigationDecision.prevent;
+          }
+
+          return NavigationDecision.navigate;
+        },
+      ))
+      ..loadRequest(Uri.parse(widget.paymentUrl));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Secure Payment'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop('cancel'),
+        ),
+        backgroundColor: AppColors.primaryDark,
+        foregroundColor: Colors.white,
+      ),
+      body: WebViewWidget(controller: _controller),
     );
   }
 }
